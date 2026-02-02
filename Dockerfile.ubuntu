@@ -1,0 +1,43 @@
+FROM ubuntu:22.04
+
+# Установка Python и зависимостей
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    wget \
+    curl \
+    gnupg \
+    ca-certificates \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libxss1 \
+    libasound2 \
+    libatspi2.0-0 \
+    libgtk-3-0 \
+    libgdk-pixbuf2.0-0 \
+    fonts-liberation \
+    libu2f-udev \
+    xvfb \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Установка Python зависимостей
+COPY requirements_mcp.txt .
+RUN pip3 install --no-cache-dir -r requirements_mcp.txt
+
+# Установка Playwright
+RUN playwright install chromium
+
+# Копирование кода
+COPY . .
+
+# Запуск
+CMD ["python3", "http_server.py"]

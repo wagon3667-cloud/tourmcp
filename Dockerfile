@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-# Установка системных зависимостей для Playwright
+# Установка системных зависимостей для Playwright (совместимо с Debian)
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -19,13 +19,12 @@ RUN apt-get update && apt-get install -y \
     libasound2 \
     libatspi2.0-0 \
     libgtk-3-0 \
-    libgdk-pixbuf2.0-0 \
+    libgdk-pixbuf-xlib-2.0-0 \
     fonts-liberation \
     libu2f-udev \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
 
-# Рабочая директория
 WORKDIR /app
 
 # Копирование зависимостей
