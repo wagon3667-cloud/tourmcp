@@ -30,6 +30,12 @@ class HTTPWrapper:
         """Асинхронная обертка для поиска туров"""
         try:
             async with self.tour_api as api:
+                # Запуск браузера с правильными путями
+                browser = await api.p.chromium.launch(
+                    headless=True,
+                    args=['--no-sandbox', '--disable-setuid-sandbox']
+                )
+                
                 tours = await api.search_tours(params)
                 
                 # Конвертируем туры в JSON
@@ -42,25 +48,20 @@ class HTTPWrapper:
                         "resort": tour.resort,
                         "rating": tour.rating,
                         "nights": tour.nights,
-                        "date": tour.date,
+                        "date_from": tour.date_from,
+                        "date_to": tour.date_to,
                         "meal": tour.meal,
                         "operator": tour.operator,
-                        "country": tour.country
+                        "link": tour.link
                     })
                 
-                return {
-                    "success": True,
-                    "count": len(tours),
-                    "tours": tours_json,
-                    "timestamp": datetime.now().isoformat()
-                }
+                await browser.close()
+                return {"success": True, "tours": tours_json, "count": len(tours_json)}
+                
         except Exception as e:
-            logger.error(f"Error in search_tours_async: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "timestamp": datetime.now().isoformat()
-            }
+            logger.error(f"Error in search_tours_async: {str(e)}")
+            logger.error(traceback.format_exc())
+            return {"success": False, "error": str(e)}
     
     def parse_query(self, query):
         """Парсинг текстового запроса"""
