@@ -11,6 +11,7 @@ import json
 import logging
 from datetime import datetime
 import traceback
+import os
 
 # Импортируем наш MCP сервер
 from fixed_departure_api import FixedTourvisorAPI, TourSearchParams, Country, Departure
@@ -21,6 +22,9 @@ CORS(app)  # Разрешаем CORS для всех доменов
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Устанавливаем правильный путь к браузерам
+os.environ['PLAYWRIGHT_BROWSERS_PATH'] = '/root/.cache/ms-playwright'
 
 class HTTPWrapper:
     def __init__(self):
