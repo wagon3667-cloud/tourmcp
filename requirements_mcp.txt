@@ -1,6 +1,9 @@
 playwright==1.48.0
 mcp==1.0.0
+flask==3.0.0
+flask-cors==4.0.0
 asyncio
 dataclasses
 enum34
 typing-extensions
+gunicorn==21.2.0
