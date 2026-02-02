@@ -1,0 +1,35 @@
+FROM python:3.11-slim
+
+# Установка минимальных зависимостей
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    gnupg \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Копирование и установка Python зависимостей
+COPY requirements_mcp.txt .
+RUN pip install --no-cache-dir -r requirements_mcp.txt
+
+# Копирование кода
+COPY . .
+
+# Установка Playwright браузеров в /tmp
+RUN playwright install chromium --force
+
+# Перемещение браузеров в доступную директорию
+RUN mkdir -p /ms-playwright && \
+    cp -r /root/.cache/ms-playwright /ms-playwright/
+
+# Создание start.sh
+RUN echo '#!/bin/bash\n\
+export PLAYWRIGHT_BROWSERS_PATH=/ms-playwright\n\
+export DISPLAY=:99\n\
+echo "🚀 Starting TourVisor MCP Server..."\n\
+python3 http_server.py' > start.sh && chmod +x start.sh
+
+EXPOSE 8080
+CMD ["./start.sh"]

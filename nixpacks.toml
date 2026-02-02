@@ -1,0 +1,23 @@
+[phases.setup]
+nixPkgs = ["...", "python311", "chromium"]
+
+[phases.install]
+cmds = [
+  "python -m venv /opt/venv",
+  ". /opt/venv/bin/activate",
+  "pip install -r requirements_mcp.txt"
+]
+
+[phases.build]
+cmds = [
+  ". /opt/venv/bin/activate",
+  "playwright install chromium --force"
+]
+
+[start]
+cmd = ". /opt/venv/bin/activate && export PLAYWRIGHT_BROWSERS_PATH=/opt/venv/lib/python3.11/site-packages/playwright/driver && python3 http_server.py"
+
+[variables]
+PYTHONUNBUFFERED = "1"
+PLAYWRIGHT_BROWSERS_PATH = "/opt/venv/lib/python3.11/site-packages/playwright/driver"
+PORT = "8080"

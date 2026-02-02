@@ -2,13 +2,14 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "chmod +x start.sh && ./start.sh"
+startCommand = "export PLAYWRIGHT_BROWSERS_PATH=/ms-playwright && export DISPLAY=:99 && python3 http_server.py"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 10
+restartPolicyMaxRetries = 3
 
 [env]
 PORT = "8080"
 PYTHONUNBUFFERED = "1"
 PLAYWRIGHT_BROWSERS_PATH = "/ms-playwright"
+PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "0"

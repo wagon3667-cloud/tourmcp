@@ -1,10 +1,28 @@
 FROM python:3.11-slim
 
-# Установка системных зависимостей
+# Установка системных зависимостей для Playwright
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     ca-certificates \
+    curl \
+    unzip \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libxss1 \
+    libasound2 \
+    libatspi2.0-0 \
+    libgtk-3-0 \
+    libgdk-pixbuf2.0-0 \
+    fonts-liberation \
+    libu2f-udev \
+    xvfb \
     && rm -rf /var/lib/apt/lists/*
 
 # Рабочая директория
@@ -16,15 +34,16 @@ COPY requirements_mcp.txt .
 # Установка Python зависимостей
 RUN pip install --no-cache-dir -r requirements_mcp.txt
 
-# Установка браузеров Playwright
-RUN playwright install chromium
-RUN playwright install-deps chromium
+# Установка браузеров Playwright без системных зависимостей
+RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0 playwright install chromium --with-deps
 
 # Копирование исходного кода
 COPY . .
 
-# Создание start.sh
+# Создание start.sh с переменными окружения
 RUN echo '#!/bin/bash\n\
+export PLAYWRIGHT_BROWSERS_PATH=/ms-playwright\n\
+export DISPLAY=:99\n\
 echo "🚀 Starting TourVisor MCP Server..."\n\
 python3 http_server.py' > start.sh && chmod +x start.sh
 
