@@ -33,8 +33,8 @@ COPY requirements_mcp.txt .
 # Установка Python зависимостей
 RUN pip install --no-cache-dir -r requirements_mcp.txt
 
-# Установка браузеров Playwright без системных зависимостей
-RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0 playwright install chromium --with-deps
+# Установка браузеров Playwright БЕЗ системных зависимостей
+RUN playwright install chromium
 
 # Копирование исходного кода
 COPY . .
